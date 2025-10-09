@@ -122,7 +122,8 @@ contract VotingContract {
 
     /**
      * @dev Get all proposals with their vote counts
-     * @return Array of proposal names and their vote counts
+     * @return names Array of proposal names
+     * @return voteCounts Array of vote counts for each proposal
      */
     function getAllProposals()
         external
