@@ -2,7 +2,7 @@
 pragma solidity ^0.8.19;
 
 import {Test, console2} from "forge-std/Test.sol";
-import {VotingContract} from "../../src/voting/voting.sol";
+import {VotingContract} from "../../src/Voting/Voting.sol";
 
 /**
  * @title VotingContract Test Suite
