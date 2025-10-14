@@ -84,6 +84,14 @@ To get this project running locally, follow these steps:
     forge test
     ```
 
+6.  **Test target contracts**
+    ```bash
+    ## forge test --match-contract [contract name]
+    forge test --match-contract Counter
+    forge test --match-contract CrowdFund
+    forge test --match-contract MyToken
+    ```
+
 ## 🎯 Future Goals
 
 My next steps in this learning journey include:
