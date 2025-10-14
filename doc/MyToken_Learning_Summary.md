@@ -1,4 +1,3 @@
-Here is a summary of our session:
 ### **Today's Learning Summary: Interacting With a Live Smart Contract**
 
 You made the crucial leap from writing code to bringing it to life on a local blockchain. Here are the key concepts and skills you mastered:
