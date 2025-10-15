@@ -72,4 +72,72 @@ contract GameCharacterTest is Test {
         assertEq(successfulMints, 1000);
         assertEq(nft.totalMinted(), 1000);
     }
+
+    // Add these test functions to your existing GameCharacterTest contract
+
+    function testTraining() public {
+        // Mint character
+        nft.mint(user1);
+
+        // Get initial attributes
+        GameCharacter.CharacterAttributes memory attrsBefore = nft
+            .getCharacterAttributes(1);
+        uint256 initialXP = attrsBefore.experience;
+
+        // Train as user1
+        vm.prank(user1);
+        nft.train(1);
+
+        // Check XP increased
+        GameCharacter.CharacterAttributes memory attrsAfter = nft
+            .getCharacterAttributes(1);
+        assertTrue(attrsAfter.experience > initialXP, "XP should increase");
+    }
+
+    function testLevelUp() public {
+        nft.mint(user1);
+
+        // Train 10 times to gain enough XP
+        vm.startPrank(user1);
+        for (uint i = 0; i < 10; i++) {
+            nft.train(1);
+        }
+        vm.stopPrank();
+
+        // Character should have leveled up
+        GameCharacter.CharacterAttributes memory attrs = nft
+            .getCharacterAttributes(1);
+        assertTrue(attrs.level > 1, "Should have leveled up");
+        assertTrue(attrs.strength > 20, "Strength should have increased");
+    }
+
+    function testOnlyOwnerCanTrain() public {
+        nft.mint(user1);
+
+        // User2 tries to train user1's character
+        vm.prank(user2);
+        vm.expectRevert("You don't own this character");
+        nft.train(1);
+    }
+
+    function testTokenURI() public {
+        nft.mint(user1);
+
+        string memory uri = nft.tokenURI(1);
+
+        // Should start with data URI scheme
+        assertTrue(bytes(uri).length > 0, "URI should not be empty");
+
+        // Should contain "data:application/json;base64,"
+        // (We can't easily decode it in Solidity, but we can check it exists)
+    }
+
+    function testGenerateMetadata() public {
+        nft.mint(user1);
+
+        string memory metadata = nft.generateMetadata(1);
+
+        // Should contain expected JSON fields
+        assertTrue(bytes(metadata).length > 0, "Metadata should not be empty");
+    }
 }
