@@ -1,5 +1,14 @@
 {
   "lib/forge-std": {
     "rev": "f90623596aecbf678c41d4d45ca81ce0e43c8219"
+  },
+  "lib/openzeppelin-contracts": {
+    "tag": {
+      "name": "v5.4.0",
+      "rev": "c64a1edb67b6e3f4a15cca8909c9482ad33a02b0"
+    }
+  },
+  "src/dynamic-nft/lib/forge-std": {
+    "rev": "b8f065fda83b8cd94a6b2fec8fcd911dc3b444fd"
   }
 }
