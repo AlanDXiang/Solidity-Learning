@@ -32,7 +32,7 @@ contract TrainCharacter is Script {
         console.log("Level:", after_train.level);
         console.log("XP:", after_train.experience);
         console.log("Strength:", after_train.strength);
-        console.log("\n✨ Character leveled up!");
+        console.log("Character leveled up!");
 
         vm.stopBroadcast();
     }
