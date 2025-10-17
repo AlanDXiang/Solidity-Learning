@@ -18,7 +18,7 @@ contract TrainCharacter is Script {
         console.log("Strength:", before.strength);
         
         // Train 15 times to level up!
-        console.log("\n🏋️ Training 15 times...");
+	console.log("Training 15 times...");
         for (uint i = 0; i < 15; i++) {
             nft.train(1);
         }
