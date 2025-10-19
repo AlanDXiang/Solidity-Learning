@@ -7,6 +7,11 @@ import "../src/GameCharacter.sol";
 // to run this script:
 // forge script script/InteractSepolia.s.sol:InteractSepolia --rpc-url $SEPOLIA_RPC_URL --private-key $PRIVATE_KEY --broadcast -vvvv
 
+// interact with command to train character on Sepolia.
+// Make sure your environment variables are set first!
+// cast send 0xD8aeeA4af402349a31399b05B69F94F91149e946 "mint(address)" $RECIPIENT_ADDRESS --rpc-url $SEPOLIA_RPC_URL --private-key $MINTER_PRIVATE_KEY
+// cast send 0xD8aeeA4af402349a31399b05B69F94F91149e946 "train(uint256)" 4 --rpc-url $SEPOLIA_RPC_URL --private-key $MINTER_PRIVATE_KEY
+
 contract InteractSepolia is Script {
     function run() external {
         // 👇 REPLACE WITH YOUR DEPLOYED SEPOLIA ADDRESS
