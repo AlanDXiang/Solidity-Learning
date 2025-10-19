@@ -4,6 +4,9 @@ pragma solidity ^0.8.20;
 import "forge-std/Script.sol";
 import "../src/GameCharacter.sol";
 
+// to run this script:
+// forge script script/InteractSepolia.s.sol:InteractSepolia --rpc-url $SEPOLIA_RPC_URL --private-key $PRIVATE_KEY --broadcast -vvvv
+
 contract InteractSepolia is Script {
     function run() external {
         // 👇 REPLACE WITH YOUR DEPLOYED SEPOLIA ADDRESS
