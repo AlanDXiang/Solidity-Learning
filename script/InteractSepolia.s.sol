@@ -36,7 +36,7 @@ contract InteractSepolia is Script {
             after_train.experience
         );
 
-        console.log("\n🎉 Character leveled up on Sepolia!");
+        console.log("Character leveled up on Sepolia!");
         console.log("View on OpenSea:");
         console.log(
             "https://testnets.opensea.io/assets/sepolia/",
