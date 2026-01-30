@@ -24,33 +24,22 @@ contract InteractSepolia is Script {
         console.log("=== TRAINING CHARACTER #1 ===");
 
         // Get initial stats
-        GameCharacter.CharacterAttributes memory before = nft
-            .getCharacterAttributes(1);
+        GameCharacter.CharacterAttributes memory before = nft.getCharacterAttributes(1);
         console.log("Before - Level:", before.level, "XP:", before.experience);
 
         // Train 10 times
-        for (uint i = 0; i < 10; i++) {
+        for (uint256 i = 0; i < 10; i++) {
             nft.train(1);
             console.log("Training session", i + 1, "completed!");
         }
 
         // Get new stats
-        GameCharacter.CharacterAttributes memory after_train = nft
-            .getCharacterAttributes(1);
-        console.log(
-            "After - Level:",
-            after_train.level,
-            "XP:",
-            after_train.experience
-        );
+        GameCharacter.CharacterAttributes memory after_train = nft.getCharacterAttributes(1);
+        console.log("After - Level:", after_train.level, "XP:", after_train.experience);
 
         console.log("Character leveled up on Sepolia!");
         console.log("View on OpenSea:");
-        console.log(
-            "https://testnets.opensea.io/assets/sepolia/",
-            nftAddress,
-            "/1"
-        );
+        console.log("https://testnets.opensea.io/assets/sepolia/", nftAddress, "/1");
 
         vm.stopBroadcast();
     }

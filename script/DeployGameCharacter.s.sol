@@ -17,18 +17,10 @@ contract DeployGameCharacter is Script {
         console.log("====================================");
         console.log("");
         console.log("Verify on Etherscan:");
-        console.log(
-            "forge verify-contract",
-            address(nft),
-            "src/GameCharacter.sol:GameCharacter --chain sepolia"
-        );
+        console.log("forge verify-contract", address(nft), "src/GameCharacter.sol:GameCharacter --chain sepolia");
         console.log("");
         console.log("View on OpenSea:");
-        console.log(
-            "https://testnets.opensea.io/assets/sepolia/",
-            address(nft),
-            "/1"
-        );
+        console.log("https://testnets.opensea.io/assets/sepolia/", address(nft), "/1");
 
         // Mint 3 test characters
         console.log("\nMinting 3 test characters...");

@@ -23,11 +23,7 @@ contract MyTokenTest is Test {
 
     // Events we'll test for (must match contract events)
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(
-        address indexed owner,
-        address indexed spender,
-        uint256 value
-    );
+    event Approval(address indexed owner, address indexed spender, uint256 value);
 
     /**
      * @notice Setup runs before EVERY test function
@@ -55,11 +51,7 @@ contract MyTokenTest is Test {
 
     function test_Deployment_OwnerBalance() public {
         uint256 expectedBalance = INITIAL_SUPPLY * 10 ** DECIMALS;
-        assertEq(
-            token.balanceOf(owner),
-            expectedBalance,
-            "Owner should have all tokens"
-        );
+        assertEq(token.balanceOf(owner), expectedBalance, "Owner should have all tokens");
     }
 
     function test_Deployment_Metadata() public {
@@ -85,11 +77,7 @@ contract MyTokenTest is Test {
         // Assertions
         assertTrue(success, "Transfer should return true");
         assertEq(token.balanceOf(alice), amount, "Alice should receive tokens");
-        assertEq(
-            token.balanceOf(owner),
-            (INITIAL_SUPPLY * 10 ** DECIMALS) - amount,
-            "Owner balance should decrease"
-        );
+        assertEq(token.balanceOf(owner), (INITIAL_SUPPLY * 10 ** DECIMALS) - amount, "Owner balance should decrease");
     }
 
     function test_Transfer_RevertWhen_InsufficientBalance() public {
@@ -115,16 +103,8 @@ contract MyTokenTest is Test {
         vm.prank(alice); // Next call will be from Alice's address
         token.transfer(bob, 50 * 10 ** DECIMALS);
 
-        assertEq(
-            token.balanceOf(bob),
-            50 * 10 ** DECIMALS,
-            "Bob should receive tokens"
-        );
-        assertEq(
-            token.balanceOf(alice),
-            50 * 10 ** DECIMALS,
-            "Alice balance should decrease"
-        );
+        assertEq(token.balanceOf(bob), 50 * 10 ** DECIMALS, "Bob should receive tokens");
+        assertEq(token.balanceOf(alice), 50 * 10 ** DECIMALS, "Alice balance should decrease");
     }
 
     // ============================================
@@ -156,11 +136,7 @@ contract MyTokenTest is Test {
         // Second approval overwrites the first
         token.approve(alice, 200 * 10 ** DECIMALS);
 
-        assertEq(
-            token.allowance(owner, alice),
-            200 * 10 ** DECIMALS,
-            "Second approval should overwrite"
-        );
+        assertEq(token.allowance(owner, alice), 200 * 10 ** DECIMALS, "Second approval should overwrite");
     }
 
     // ============================================
@@ -182,11 +158,7 @@ contract MyTokenTest is Test {
 
         assertTrue(success, "TransferFrom should succeed");
         assertEq(token.balanceOf(bob), amount, "Bob should receive tokens");
-        assertEq(
-            token.allowance(owner, alice),
-            0,
-            "Allowance should be reduced to 0"
-        );
+        assertEq(token.allowance(owner, alice), 0, "Allowance should be reduced to 0");
     }
 
     function test_TransferFrom_RevertWhen_NoAllowance() public {
@@ -232,11 +204,7 @@ contract MyTokenTest is Test {
         // Increase allowance
         token.increaseAllowance(alice, 50 * 10 ** DECIMALS);
 
-        assertEq(
-            token.allowance(owner, alice),
-            150 * 10 ** DECIMALS,
-            "Allowance should increase"
-        );
+        assertEq(token.allowance(owner, alice), 150 * 10 ** DECIMALS, "Allowance should increase");
     }
 
     function test_DecreaseAllowance_Success() public {
@@ -246,11 +214,7 @@ contract MyTokenTest is Test {
         // Decrease allowance
         token.decreaseAllowance(alice, 30 * 10 ** DECIMALS);
 
-        assertEq(
-            token.allowance(owner, alice),
-            70 * 10 ** DECIMALS,
-            "Allowance should decrease"
-        );
+        assertEq(token.allowance(owner, alice), 70 * 10 ** DECIMALS, "Allowance should decrease");
     }
 
     function test_DecreaseAllowance_RevertWhen_BelowZero() public {
@@ -275,16 +239,8 @@ contract MyTokenTest is Test {
         bool success = token.burn(burnAmount);
 
         assertTrue(success, "Burn should succeed");
-        assertEq(
-            token.balanceOf(owner),
-            initialBalance - burnAmount,
-            "Balance should decrease"
-        );
-        assertEq(
-            token.totalSupply(),
-            initialSupply - burnAmount,
-            "Total supply should decrease"
-        );
+        assertEq(token.balanceOf(owner), initialBalance - burnAmount, "Balance should decrease");
+        assertEq(token.totalSupply(), initialSupply - burnAmount, "Total supply should decrease");
     }
 
     function test_Burn_RevertWhen_InsufficientBalance() public {
@@ -314,10 +270,7 @@ contract MyTokenTest is Test {
     /**
      * @notice Fuzz test: TransferFrom with random allowances
      */
-    function testFuzz_TransferFrom(
-        uint256 allowanceAmount,
-        uint256 transferAmount
-    ) public {
+    function testFuzz_TransferFrom(uint256 allowanceAmount, uint256 transferAmount) public {
         // Ensure valid test parameters
         allowanceAmount = bound(allowanceAmount, 1, token.balanceOf(owner));
         transferAmount = bound(transferAmount, 1, allowanceAmount);
@@ -331,10 +284,7 @@ contract MyTokenTest is Test {
 
         // Verify
         assertEq(token.balanceOf(bob), transferAmount);
-        assertEq(
-            token.allowance(owner, alice),
-            allowanceAmount - transferAmount
-        );
+        assertEq(token.allowance(owner, alice), allowanceAmount - transferAmount);
     }
 
     // ============================================
@@ -347,9 +297,6 @@ contract MyTokenTest is Test {
     function invariant_TotalSupplyConstant() public {
         // This test runs after random sequences of function calls
         uint256 currentSupply = token.totalSupply();
-        assertTrue(
-            currentSupply <= INITIAL_SUPPLY * 10 ** DECIMALS,
-            "Supply should never increase"
-        );
+        assertTrue(currentSupply <= INITIAL_SUPPLY * 10 ** DECIMALS, "Supply should never increase");
     }
 }

@@ -6,8 +6,7 @@ pragma solidity ^0.8.20;
  * Based on: https://github.com/Brechtpd/base64/blob/main/base64.sol
  */
 library Base64 {
-    string internal constant TABLE =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    string internal constant TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     function encode(bytes memory data) internal pure returns (string memory) {
         if (data.length == 0) return "";
@@ -23,33 +22,17 @@ library Base64 {
             let endPtr := add(dataPtr, mload(data))
             let resultPtr := add(result, 32)
 
-            for {
-
-            } lt(dataPtr, endPtr) {
-
-            } {
+            for {} lt(dataPtr, endPtr) {} {
                 dataPtr := add(dataPtr, 3)
                 let input := mload(dataPtr)
 
-                mstore(
-                    resultPtr,
-                    shl(248, mload(add(tablePtr, and(shr(18, input), 0x3F))))
-                )
+                mstore(resultPtr, shl(248, mload(add(tablePtr, and(shr(18, input), 0x3F)))))
                 resultPtr := add(resultPtr, 1)
-                mstore(
-                    resultPtr,
-                    shl(248, mload(add(tablePtr, and(shr(12, input), 0x3F))))
-                )
+                mstore(resultPtr, shl(248, mload(add(tablePtr, and(shr(12, input), 0x3F)))))
                 resultPtr := add(resultPtr, 1)
-                mstore(
-                    resultPtr,
-                    shl(248, mload(add(tablePtr, and(shr(6, input), 0x3F))))
-                )
+                mstore(resultPtr, shl(248, mload(add(tablePtr, and(shr(6, input), 0x3F)))))
                 resultPtr := add(resultPtr, 1)
-                mstore(
-                    resultPtr,
-                    shl(248, mload(add(tablePtr, and(input, 0x3F))))
-                )
+                mstore(resultPtr, shl(248, mload(add(tablePtr, and(input, 0x3F)))))
                 resultPtr := add(resultPtr, 1)
             }
 

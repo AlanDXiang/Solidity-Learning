@@ -125,11 +125,7 @@ contract VotingContract {
      * @return names Array of proposal names
      * @return voteCounts Array of vote counts for each proposal
      */
-    function getAllProposals()
-        external
-        view
-        returns (string[] memory names, uint256[] memory voteCounts)
-    {
+    function getAllProposals() external view returns (string[] memory names, uint256[] memory voteCounts) {
         uint256 length = proposals.length;
         names = new string[](length);
         voteCounts = new uint256[](length);

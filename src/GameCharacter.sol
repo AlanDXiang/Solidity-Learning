@@ -36,18 +36,10 @@ contract GameCharacter is ERC721, Ownable {
     // ============================================
 
     event CharacterMinted(
-        address indexed owner,
-        uint256 indexed tokenId,
-        uint256 level,
-        uint256 strength,
-        uint256 health
+        address indexed owner, uint256 indexed tokenId, uint256 level, uint256 strength, uint256 health
     );
     event CharacterLeveledUp(uint256 indexed tokenId, uint256 newLevel);
-    event ExperienceGained(
-        uint256 indexed tokenId,
-        uint256 xpGained,
-        uint256 totalXP
-    );
+    event ExperienceGained(uint256 indexed tokenId, uint256 xpGained, uint256 totalXP);
 
     // ============================================
     // CONSTRUCTOR
@@ -70,10 +62,7 @@ contract GameCharacter is ERC721, Ownable {
         _safeMint(to, tokenId);
 
         tokenAttributes[tokenId] = CharacterAttributes({
-            level: 1,
-            strength: _pseudoRandom(10, 20, tokenId),
-            health: _pseudoRandom(50, 100, tokenId),
-            experience: 0
+            level: 1, strength: _pseudoRandom(10, 20, tokenId), health: _pseudoRandom(50, 100, tokenId), experience: 0
         });
 
         emit CharacterMinted(
@@ -143,48 +132,45 @@ contract GameCharacter is ERC721, Ownable {
      * @param tokenId The token to generate an image for
      * @return SVG image as a string
      */
-    function generateCharacterImage(
-        uint256 tokenId
-    ) public view returns (string memory) {
+    function generateCharacterImage(uint256 tokenId) public view returns (string memory) {
         CharacterAttributes memory attrs = tokenAttributes[tokenId];
 
         // Choose color based on level
         string memory color = _getColorForLevel(attrs.level);
 
         // Build the SVG
-        return
-            string(
-                abi.encodePacked(
-                    '<svg xmlns="http://www.w3.org/2000/svg" width="350" height="350" style="background:#1a1a2e">',
-                    // Character body (a simple rectangle that changes color by level)
-                    '<rect x="125" y="120" width="100" height="150" fill="',
-                    color,
-                    '" stroke="#fff" stroke-width="3" rx="10"/>',
-                    // Head
-                    '<circle cx="175" cy="80" r="35" fill="',
-                    color,
-                    '" stroke="#fff" stroke-width="3"/>',
-                    // Eyes
-                    '<circle cx="165" cy="75" r="5" fill="#fff"/>',
-                    '<circle cx="185" cy="75" r="5" fill="#fff"/>',
-                    // Level badge
-                    '<rect x="15" y="15" width="80" height="40" fill="#e94560" rx="8"/>',
-                    '<text x="55" y="42" font-family="Arial" font-size="20" fill="#fff" text-anchor="middle" font-weight="bold">LVL ',
-                    attrs.level.toString(),
-                    "</text>",
-                    // Stats display
-                    '<text x="175" y="300" font-family="Arial" font-size="14" fill="#fff" text-anchor="middle">STR: ',
-                    attrs.strength.toString(),
-                    "</text>",
-                    '<text x="175" y="320" font-family="Arial" font-size="14" fill="#fff" text-anchor="middle">HP: ',
-                    attrs.health.toString(),
-                    "</text>",
-                    '<text x="175" y="340" font-family="Arial" font-size="14" fill="#fff" text-anchor="middle">XP: ',
-                    attrs.experience.toString(),
-                    "</text>",
-                    "</svg>"
-                )
-            );
+        return string(
+            abi.encodePacked(
+                '<svg xmlns="http://www.w3.org/2000/svg" width="350" height="350" style="background:#1a1a2e">',
+                // Character body (a simple rectangle that changes color by level)
+                '<rect x="125" y="120" width="100" height="150" fill="',
+                color,
+                '" stroke="#fff" stroke-width="3" rx="10"/>',
+                // Head
+                '<circle cx="175" cy="80" r="35" fill="',
+                color,
+                '" stroke="#fff" stroke-width="3"/>',
+                // Eyes
+                '<circle cx="165" cy="75" r="5" fill="#fff"/>',
+                '<circle cx="185" cy="75" r="5" fill="#fff"/>',
+                // Level badge
+                '<rect x="15" y="15" width="80" height="40" fill="#e94560" rx="8"/>',
+                '<text x="55" y="42" font-family="Arial" font-size="20" fill="#fff" text-anchor="middle" font-weight="bold">LVL ',
+                attrs.level.toString(),
+                "</text>",
+                // Stats display
+                '<text x="175" y="300" font-family="Arial" font-size="14" fill="#fff" text-anchor="middle">STR: ',
+                attrs.strength.toString(),
+                "</text>",
+                '<text x="175" y="320" font-family="Arial" font-size="14" fill="#fff" text-anchor="middle">HP: ',
+                attrs.health.toString(),
+                "</text>",
+                '<text x="175" y="340" font-family="Arial" font-size="14" fill="#fff" text-anchor="middle">XP: ',
+                attrs.experience.toString(),
+                "</text>",
+                "</svg>"
+            )
+        );
     }
 
     /**
@@ -194,51 +180,43 @@ contract GameCharacter is ERC721, Ownable {
      * @param tokenId The token to generate metadata for
      * @return JSON metadata as a string
      */
-    function generateMetadata(
-        uint256 tokenId
-    ) public view returns (string memory) {
+    function generateMetadata(uint256 tokenId) public view returns (string memory) {
         CharacterAttributes memory attrs = tokenAttributes[tokenId];
 
         // Generate the SVG image
         string memory svg = generateCharacterImage(tokenId);
 
         // Encode SVG to Base64
-        string memory imageURI = string(
-            abi.encodePacked(
-                "data:image/svg+xml;base64,",
-                Base64.encode(bytes(svg))
-            )
-        );
+        string memory imageURI = string(abi.encodePacked("data:image/svg+xml;base64,", Base64.encode(bytes(svg))));
 
         // Build JSON metadata
-        return
-            string(
-                abi.encodePacked(
-                    "{",
-                    '"name": "GameCharacter #',
-                    tokenId.toString(),
-                    '",',
-                    '"description": "A dynamic game character that grows stronger with training!",',
-                    '"image": "',
-                    imageURI,
-                    '",',
-                    '"attributes": [',
-                    '{"trait_type": "Level", "value": ',
-                    attrs.level.toString(),
-                    "},",
-                    '{"trait_type": "Strength", "value": ',
-                    attrs.strength.toString(),
-                    "},",
-                    '{"trait_type": "Health", "value": ',
-                    attrs.health.toString(),
-                    "},",
-                    '{"trait_type": "Experience", "value": ',
-                    attrs.experience.toString(),
-                    "}",
-                    "]",
-                    "}"
-                )
-            );
+        return string(
+            abi.encodePacked(
+                "{",
+                '"name": "GameCharacter #',
+                tokenId.toString(),
+                '",',
+                '"description": "A dynamic game character that grows stronger with training!",',
+                '"image": "',
+                imageURI,
+                '",',
+                '"attributes": [',
+                '{"trait_type": "Level", "value": ',
+                attrs.level.toString(),
+                "},",
+                '{"trait_type": "Strength", "value": ',
+                attrs.strength.toString(),
+                "},",
+                '{"trait_type": "Health", "value": ',
+                attrs.health.toString(),
+                "},",
+                '{"trait_type": "Experience", "value": ',
+                attrs.experience.toString(),
+                "}",
+                "]",
+                "}"
+            )
+        );
     }
 
     /**
@@ -248,20 +226,12 @@ contract GameCharacter is ERC721, Ownable {
      * @param tokenId The token to get the URI for
      * @return The full token URI (a data URI with base64-encoded JSON)
      */
-    function tokenURI(
-        uint256 tokenId
-    ) public view override returns (string memory) {
+    function tokenURI(uint256 tokenId) public view override returns (string memory) {
         require(_ownerOf(tokenId) != address(0), "Token does not exist");
 
         string memory json = generateMetadata(tokenId);
 
-        return
-            string(
-                abi.encodePacked(
-                    "data:application/json;base64,",
-                    Base64.encode(bytes(json))
-                )
-            );
+        return string(abi.encodePacked("data:application/json;base64,", Base64.encode(bytes(json))));
     }
 
     // ============================================
@@ -272,9 +242,7 @@ contract GameCharacter is ERC721, Ownable {
      * @dev Get color based on character level
      * Higher level = cooler colors!
      */
-    function _getColorForLevel(
-        uint256 level
-    ) internal pure returns (string memory) {
+    function _getColorForLevel(uint256 level) internal pure returns (string memory) {
         if (level >= 10) return "#ffd700"; // Gold
         if (level >= 7) return "#9b59b6"; // Purple
         if (level >= 5) return "#3498db"; // Blue
@@ -282,9 +250,7 @@ contract GameCharacter is ERC721, Ownable {
         return "#95a5a6"; // Gray (level 1-2)
     }
 
-    function getCharacterAttributes(
-        uint256 tokenId
-    ) public view returns (CharacterAttributes memory) {
+    function getCharacterAttributes(uint256 tokenId) public view returns (CharacterAttributes memory) {
         require(_ownerOf(tokenId) != address(0), "Token does not exist");
         return tokenAttributes[tokenId];
     }
@@ -293,14 +259,8 @@ contract GameCharacter is ERC721, Ownable {
         return _nextTokenId - 1;
     }
 
-    function _pseudoRandom(
-        uint256 min,
-        uint256 max,
-        uint256 seed
-    ) private view returns (uint256) {
-        uint256 randomHash = uint256(
-            keccak256(abi.encodePacked(block.timestamp, msg.sender, seed))
-        );
+    function _pseudoRandom(uint256 min, uint256 max, uint256 seed) private view returns (uint256) {
+        uint256 randomHash = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, seed)));
         return min + (randomHash % (max - min + 1));
     }
 }
