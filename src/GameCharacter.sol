@@ -259,8 +259,15 @@ contract GameCharacter is ERC721, Ownable {
         return _nextTokenId - 1;
     }
 
+    // slither-disable-start weak-prng
     function _pseudoRandom(uint256 min, uint256 max, uint256 seed) private view returns (uint256) {
-        uint256 randomHash = uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, seed)));
+        // We use block.prevrandao (The Beacon Chain randomness)
+        // We removed block.timestamp to reduce miner influence vectors
+        uint256 randomHash = uint256(
+            keccak256(abi.encodePacked(block.prevrandao, msg.sender, seed))
+        );
+        
         return min + (randomHash % (max - min + 1));
     }
+    // slither-disable-end weak-prng
 }

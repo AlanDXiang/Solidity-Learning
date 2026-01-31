@@ -145,7 +145,13 @@ contract EvolvingGameCharacter is ERC721, Ownable {
         );
     }
 
+    // slither-disable-start weak-prng
     function _pseudoRandom(uint256 min, uint256 max, uint256 seed) private view returns (uint256) {
-        return min + (uint256(keccak256(abi.encodePacked(block.timestamp, msg.sender, seed))) % (max - min + 1));
+        // Using block.prevrandao and disabling the warning for this learning project
+        return min + (
+            uint256(keccak256(abi.encodePacked(block.prevrandao, msg.sender, seed))) 
+            % (max - min + 1)
+        );
     }
+    // slither-disable-end weak-prng
 }
