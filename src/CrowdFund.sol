@@ -191,6 +191,7 @@ contract CrowdFund {
      * @dev 获取剩余时间（秒）
      */
     function getTimeRemaining() public view returns (uint256) {
+        // slither-disable-next-line timestamp
         if (block.timestamp >= deadline) {
             return 0;
         }

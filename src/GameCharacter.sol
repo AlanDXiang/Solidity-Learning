@@ -272,6 +272,7 @@ contract GameCharacter is ERC721, Ownable {
      * @dev Get color based on character level
      * Higher level = cooler colors!
      */
+    // slither-disable-next-line timestamp
     function _getColorForLevel(
         uint256 level
     ) internal pure returns (string memory) {

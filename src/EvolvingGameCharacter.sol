@@ -33,7 +33,10 @@ contract EvolvingGameCharacter is ERC721, Ownable {
         uint256 tokenId = _nextTokenId++;
 
         tokenAttributes[tokenId] = CharacterAttributes({
-            level: 1, strength: _pseudoRandom(10, 20, tokenId), health: _pseudoRandom(80, 120, tokenId), experience: 0
+            level: 1,
+            strength: _pseudoRandom(10, 20, tokenId),
+            health: _pseudoRandom(80, 120, tokenId),
+            experience: 0
         });
 
         _safeMint(to, tokenId);
@@ -45,7 +48,7 @@ contract EvolvingGameCharacter is ERC721, Ownable {
 
         attrs.experience += _pseudoRandom(15, 35, block.timestamp);
         uint256 newLevel = 1 + (attrs.experience / XP_PER_LEVEL);
-
+        // slither-disable-next-line timestamp
         if (newLevel > attrs.level) {
             attrs.level = newLevel;
             attrs.strength += 7;
@@ -54,102 +57,133 @@ contract EvolvingGameCharacter is ERC721, Ownable {
     }
 
     // --- On-Chain SVG Engine ---
-
-    function generateCharacterImage(uint256 tokenId) public view returns (string memory) {
+    // slither-disable-next-line timestamp
+    function generateCharacterImage(
+        uint256 tokenId
+    ) public view returns (string memory) {
         CharacterAttributes memory attrs = tokenAttributes[tokenId];
 
         // Dynamic Layering: Crown (Lvl 10+)
+        // slither-disable-next-line timestamp
         string memory crown = attrs.level >= 10
             ? '<path d="M155 45 L165 55 L175 45 L185 55 L195 45 V65 H155 Z" fill="#FFD700" stroke="#000"/>'
             : "";
 
         // Dynamic Layering: Visor (Lvl 5+) vs Eyes (Lvl 1-4)
+        // slither-disable-next-line timestamp
         string memory face = attrs.level >= 5
             ? string(
                 abi.encodePacked(
-                    '<rect x="150" y="72" width="50" height="12" rx="6" fill="', _getSecondaryColor(attrs.level), '"/>'
+                    '<rect x="150" y="72" width="50" height="12" rx="6" fill="',
+                    _getSecondaryColor(attrs.level),
+                    '"/>'
                 )
             )
             : '<circle cx="165" cy="75" r="5" fill="#FFF"/><circle cx="185" cy="75" r="5" fill="#FFF"/>';
 
         // Background Aura (Lvl 10+)
+        // slither-disable-next-line timestamp
         string memory aura = attrs.level >= 10
             ? '<circle cx="175" cy="150" r="120" fill="none" stroke="#FFD700" stroke-width="2" stroke-dasharray="10" opacity="0.4"/>'
             : "";
 
-        return string(
-            abi.encodePacked(
-                '<svg xmlns="http://www.w3.org/2000/svg" width="350" height="350" style="background:#0F0C29">',
-                aura,
-                // Body with dynamic rounding and color
-                '<rect x="125" y="120" width="100" height="150" fill="',
-                _getMainColor(attrs.level),
-                '" stroke="#FFF" stroke-width="3" rx="20"/>',
-                // Head
-                '<circle cx="175" cy="80" r="40" fill="',
-                _getMainColor(attrs.level),
-                '" stroke="#FFF" stroke-width="3"/>',
-                face,
-                crown,
-                // Modern Stats HUD
-                '<rect x="25" y="280" width="300" height="55" rx="15" fill="rgba(255,255,255,0.05)"/>',
-                '<text x="50" y="305" font-family="Verdana" font-size="14" fill="#00D4FF" font-weight="bold">LVL ',
-                attrs.level.toString(),
-                "</text>",
-                '<text x="50" y="325" font-family="Verdana" font-size="11" fill="#AAA">STR: ',
-                attrs.strength.toString(),
-                " | HP: ",
-                attrs.health.toString(),
-                " | XP: ",
-                attrs.experience.toString(),
-                "</text>",
-                "</svg>"
-            )
-        );
+        return
+            string(
+                abi.encodePacked(
+                    '<svg xmlns="http://www.w3.org/2000/svg" width="350" height="350" style="background:#0F0C29">',
+                    aura,
+                    // Body with dynamic rounding and color
+                    '<rect x="125" y="120" width="100" height="150" fill="',
+                    _getMainColor(attrs.level),
+                    '" stroke="#FFF" stroke-width="3" rx="20"/>',
+                    // Head
+                    '<circle cx="175" cy="80" r="40" fill="',
+                    _getMainColor(attrs.level),
+                    '" stroke="#FFF" stroke-width="3"/>',
+                    face,
+                    crown,
+                    // Modern Stats HUD
+                    '<rect x="25" y="280" width="300" height="55" rx="15" fill="rgba(255,255,255,0.05)"/>',
+                    '<text x="50" y="305" font-family="Verdana" font-size="14" fill="#00D4FF" font-weight="bold">LVL ',
+                    attrs.level.toString(),
+                    "</text>",
+                    '<text x="50" y="325" font-family="Verdana" font-size="11" fill="#AAA">STR: ',
+                    attrs.strength.toString(),
+                    " | HP: ",
+                    attrs.health.toString(),
+                    " | XP: ",
+                    attrs.experience.toString(),
+                    "</text>",
+                    "</svg>"
+                )
+            );
     }
 
     // --- Helper Styling Functions ---
 
-    function _getMainColor(uint256 level) internal pure returns (string memory) {
+    function _getMainColor(
+        uint256 level
+    ) internal pure returns (string memory) {
+        // slither-disable-next-line timestamp
         if (level >= 10) return "#1A1A1A"; // Elite Sleek Black
+        // slither-disable-next-line timestamp
         if (level >= 5) return "#2980B9"; // Advanced Blue
         return "#7F8C8D"; // Starter Gray
     }
 
-    function _getSecondaryColor(uint256 level) internal pure returns (string memory) {
+    function _getSecondaryColor(
+        uint256 level
+    ) internal pure returns (string memory) {
+        // slither-disable-next-line timestamp
         if (level >= 10) return "#FF4B2B"; // Power Red
         return "#00FBFF"; // Tech Cyan
     }
 
     // --- Standard Metadata Logic ---
 
-    function tokenURI(uint256 tokenId) public view override returns (string memory) {
+    function tokenURI(
+        uint256 tokenId
+    ) public view override returns (string memory) {
         _requireOwned(tokenId);
         string memory svg = generateCharacterImage(tokenId);
-        string memory imageURI = string(abi.encodePacked("data:image/svg+xml;base64,", Base64.encode(bytes(svg))));
-
-        return string(
+        string memory imageURI = string(
             abi.encodePacked(
-                "data:application/json;base64,",
-                Base64.encode(
-                    bytes(
-                        abi.encodePacked(
-                            '{"name": "EvoBot #',
-                            tokenId.toString(),
-                            '", "description": "A character that evolves physically as it levels up.", "image": "',
-                            imageURI,
-                            '"}'
+                "data:image/svg+xml;base64,",
+                Base64.encode(bytes(svg))
+            )
+        );
+
+        return
+            string(
+                abi.encodePacked(
+                    "data:application/json;base64,",
+                    Base64.encode(
+                        bytes(
+                            abi.encodePacked(
+                                '{"name": "EvoBot #',
+                                tokenId.toString(),
+                                '", "description": "A character that evolves physically as it levels up.", "image": "',
+                                imageURI,
+                                '"}'
+                            )
                         )
                     )
                 )
-            )
-        );
+            );
     }
 
     // slither-disable-start weak-prng
-    function _pseudoRandom(uint256 min, uint256 max, uint256 seed) private view returns (uint256) {
+    function _pseudoRandom(
+        uint256 min,
+        uint256 max,
+        uint256 seed
+    ) private view returns (uint256) {
         // Using block.prevrandao and disabling the warning for this learning project
-        return min + (uint256(keccak256(abi.encodePacked(block.prevrandao, msg.sender, seed))) % (max - min + 1));
+        return
+            min +
+            (uint256(
+                keccak256(abi.encodePacked(block.prevrandao, msg.sender, seed))
+            ) % (max - min + 1));
     }
     // slither-disable-end weak-prng
 }
