@@ -6,13 +6,15 @@ pragma solidity ^0.8.20;
  * Based on: https://github.com/Brechtpd/base64/blob/main/base64.sol
  */
 library Base64 {
-    string internal constant TABLE = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
+    string internal constant TABLE =
+        "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 
     function encode(bytes memory data) internal pure returns (string memory) {
         if (data.length == 0) return "";
 
         string memory table = TABLE;
-        uint256 encodedLen = 4 * ((data.length + 2) / 3);
+        // uint256 encodedLen = 4 * ((data.length + 2) / 3);
+        uint256 encodedLen = (4 * (data.length + 2)) / 3;
         string memory result = new string(encodedLen + 32);
 
         assembly {
@@ -26,13 +28,25 @@ library Base64 {
                 dataPtr := add(dataPtr, 3)
                 let input := mload(dataPtr)
 
-                mstore(resultPtr, shl(248, mload(add(tablePtr, and(shr(18, input), 0x3F)))))
+                mstore(
+                    resultPtr,
+                    shl(248, mload(add(tablePtr, and(shr(18, input), 0x3F))))
+                )
                 resultPtr := add(resultPtr, 1)
-                mstore(resultPtr, shl(248, mload(add(tablePtr, and(shr(12, input), 0x3F)))))
+                mstore(
+                    resultPtr,
+                    shl(248, mload(add(tablePtr, and(shr(12, input), 0x3F))))
+                )
                 resultPtr := add(resultPtr, 1)
-                mstore(resultPtr, shl(248, mload(add(tablePtr, and(shr(6, input), 0x3F)))))
+                mstore(
+                    resultPtr,
+                    shl(248, mload(add(tablePtr, and(shr(6, input), 0x3F))))
+                )
                 resultPtr := add(resultPtr, 1)
-                mstore(resultPtr, shl(248, mload(add(tablePtr, and(input, 0x3F)))))
+                mstore(
+                    resultPtr,
+                    shl(248, mload(add(tablePtr, and(input, 0x3F))))
+                )
                 resultPtr := add(resultPtr, 1)
             }
 
