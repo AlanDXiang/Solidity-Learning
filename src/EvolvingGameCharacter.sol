@@ -31,11 +31,12 @@ contract EvolvingGameCharacter is ERC721, Ownable {
     function mint(address to) public {
         require(_nextTokenId <= MAX_SUPPLY, "Max supply reached");
         uint256 tokenId = _nextTokenId++;
-        _safeMint(to, tokenId);
 
         tokenAttributes[tokenId] = CharacterAttributes({
             level: 1, strength: _pseudoRandom(10, 20, tokenId), health: _pseudoRandom(80, 120, tokenId), experience: 0
         });
+
+        _safeMint(to, tokenId);
     }
 
     function train(uint256 tokenId) public {
@@ -148,10 +149,7 @@ contract EvolvingGameCharacter is ERC721, Ownable {
     // slither-disable-start weak-prng
     function _pseudoRandom(uint256 min, uint256 max, uint256 seed) private view returns (uint256) {
         // Using block.prevrandao and disabling the warning for this learning project
-        return min + (
-            uint256(keccak256(abi.encodePacked(block.prevrandao, msg.sender, seed))) 
-            % (max - min + 1)
-        );
+        return min + (uint256(keccak256(abi.encodePacked(block.prevrandao, msg.sender, seed))) % (max - min + 1));
     }
     // slither-disable-end weak-prng
 }

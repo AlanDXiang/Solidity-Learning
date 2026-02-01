@@ -59,11 +59,11 @@ contract GameCharacter is ERC721, Ownable {
         uint256 tokenId = _nextTokenId;
         _nextTokenId++;
 
-        _safeMint(to, tokenId);
-
         tokenAttributes[tokenId] = CharacterAttributes({
             level: 1, strength: _pseudoRandom(10, 20, tokenId), health: _pseudoRandom(50, 100, tokenId), experience: 0
         });
+
+        _safeMint(to, tokenId);
 
         emit CharacterMinted(
             to,
@@ -263,10 +263,8 @@ contract GameCharacter is ERC721, Ownable {
     function _pseudoRandom(uint256 min, uint256 max, uint256 seed) private view returns (uint256) {
         // We use block.prevrandao (The Beacon Chain randomness)
         // We removed block.timestamp to reduce miner influence vectors
-        uint256 randomHash = uint256(
-            keccak256(abi.encodePacked(block.prevrandao, msg.sender, seed))
-        );
-        
+        uint256 randomHash = uint256(keccak256(abi.encodePacked(block.prevrandao, msg.sender, seed)));
+
         return min + (randomHash % (max - min + 1));
     }
     // slither-disable-end weak-prng
