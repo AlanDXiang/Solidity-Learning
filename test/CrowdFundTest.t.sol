@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 import "forge-std/Test.sol";
 import "../src/CrowdFund.sol";
@@ -49,7 +49,11 @@ contract CrowdFundTest is Test {
     uint256 constant GOAL = 10 ether;
     uint256 constant DURATION = 60;
 
-    event ContributionReceived(address indexed contributor, uint256 amount, uint256 totalFunded);
+    event ContributionReceived(
+        address indexed contributor,
+        uint256 amount,
+        uint256 totalFunded
+    );
     event FundsWithdrawn(address indexed owner, uint256 amount);
     event RefundIssued(address indexed contributor, uint256 amount);
     event StateChanged(CrowdFund.State newState);
@@ -83,11 +87,17 @@ contract CrowdFundTest is Test {
     }
 
     function test_Deployment_DeadlineIsSet() public view {
-        assertEq(crowdFund.deadline(), block.timestamp + (DURATION * 1 minutes));
+        assertEq(
+            crowdFund.deadline(),
+            block.timestamp + (DURATION * 1 minutes)
+        );
     }
 
     function test_Deployment_InitialStateIsFunding() public view {
-        assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Funding));
+        assertEq(
+            uint256(crowdFund.currentState()),
+            uint256(CrowdFund.State.Funding)
+        );
     }
 
     function test_Deployment_TotalFundedIsZero() public view {
@@ -157,7 +167,7 @@ contract CrowdFundTest is Test {
         uint256 amount = 1 ether;
 
         vm.prank(contributor1);
-        (bool success,) = address(crowdFund).call{value: amount}("");
+        (bool success, ) = address(crowdFund).call{value: amount}("");
 
         assertTrue(success);
         assertEq(crowdFund.contributions(contributor1), amount);
@@ -167,7 +177,7 @@ contract CrowdFundTest is Test {
         uint256 amount = 1 ether;
 
         vm.prank(contributor1);
-        (bool success,) = address(crowdFund).call{value: amount}("0x1234");
+        (bool success, ) = address(crowdFund).call{value: amount}("0x1234");
 
         assertTrue(success);
         assertEq(crowdFund.contributions(contributor1), amount);
@@ -281,7 +291,10 @@ contract CrowdFundTest is Test {
 
         crowdFund.checkAndUpdateState();
 
-        assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Successful));
+        assertEq(
+            uint256(crowdFund.currentState()),
+            uint256(CrowdFund.State.Successful)
+        );
     }
 
     function test_CheckAndUpdateState_ToFailed() public {
@@ -292,7 +305,10 @@ contract CrowdFundTest is Test {
 
         crowdFund.checkAndUpdateState();
 
-        assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Failed));
+        assertEq(
+            uint256(crowdFund.currentState()),
+            uint256(CrowdFund.State.Failed)
+        );
     }
 
     function test_CheckAndUpdateState_EmitsSuccessfulEvent() public {
@@ -328,7 +344,10 @@ contract CrowdFundTest is Test {
         crowdFund.checkAndUpdateState();
         crowdFund.checkAndUpdateState(); // 第二次调用不应该改变状态
 
-        assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Successful));
+        assertEq(
+            uint256(crowdFund.currentState()),
+            uint256(CrowdFund.State.Successful)
+        );
     }
 
     // ========== 测试组 5: 成功场景 - 提取资金 ==========
@@ -534,7 +553,9 @@ contract CrowdFundTest is Test {
     function test_Refund_PreventsReentrancy() public {
         // 创建恶意合约
         // MaliciousRefunder attacker = new MaliciousRefunder(address(crowdFund));
-        MaliciousRefunder attacker = new MaliciousRefunder(payable(address(crowdFund)));
+        MaliciousRefunder attacker = new MaliciousRefunder(
+            payable(address(crowdFund))
+        );
         vm.deal(address(attacker), 10 ether);
 
         // 恶意合约贡献
@@ -622,7 +643,11 @@ contract CrowdFundTest is Test {
         assertEq(crowdFund.totalFunded(), amount);
     }
 
-    function testFuzz_MultipleContributions(uint256 amount1, uint256 amount2, uint256 amount3) public {
+    function testFuzz_MultipleContributions(
+        uint256 amount1,
+        uint256 amount2,
+        uint256 amount3
+    ) public {
         vm.assume(amount1 > 0 && amount1 <= 100 ether);
         vm.assume(amount2 > 0 && amount2 <= 100 ether);
         vm.assume(amount3 > 0 && amount3 <= 100 ether);
@@ -672,7 +697,11 @@ contract CrowdFundTest is Test {
         vm.prank(contributor1);
         crowdFund.refund();
 
-        assertEq(contributor1.balance, balanceBefore + amount, "Refund amount mismatch");
+        assertEq(
+            contributor1.balance,
+            balanceBefore + amount,
+            "Refund amount mismatch"
+        );
     }
 
     // ========== 测试组 9: 复杂场景 ==========
@@ -703,7 +732,10 @@ contract CrowdFundTest is Test {
         vm.warp(block.timestamp + 21 minutes);
         crowdFund.checkAndUpdateState();
 
-        assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Successful));
+        assertEq(
+            uint256(crowdFund.currentState()),
+            uint256(CrowdFund.State.Successful)
+        );
 
         // Owner 提取资金
         uint256 ownerBalanceBefore = owner.balance;
@@ -735,7 +767,10 @@ contract CrowdFundTest is Test {
         vm.warp(block.timestamp + DURATION * 1 minutes + 1);
         crowdFund.checkAndUpdateState();
 
-        assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Failed));
+        assertEq(
+            uint256(crowdFund.currentState()),
+            uint256(CrowdFund.State.Failed)
+        );
 
         // 所有贡献者退款
         uint256 balance1Before = contributor1.balance;
@@ -784,7 +819,10 @@ contract CrowdFundTest is Test {
         vm.warp(block.timestamp + 1);
         crowdFund.checkAndUpdateState();
 
-        assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Successful));
+        assertEq(
+            uint256(crowdFund.currentState()),
+            uint256(CrowdFund.State.Successful)
+        );
     }
 
     // ========== 测试组 10: Gas 优化验证 ==========
@@ -834,7 +872,10 @@ contract CrowdFundTest is Test {
     // ========== 测试组 11: 不变量测试 ==========
 
     function invariant_TotalFundedMatchesBalance() public view {
-        if (uint256(crowdFund.currentState()) == uint256(CrowdFund.State.Funding)) {
+        if (
+            uint256(crowdFund.currentState()) ==
+            uint256(CrowdFund.State.Funding)
+        ) {
             assertEq(crowdFund.totalFunded(), crowdFund.getBalance());
         }
     }
@@ -844,13 +885,19 @@ contract CrowdFundTest is Test {
         // 永远不会回退到 Funding
         CrowdFund.State currentState = crowdFund.currentState();
         if (currentState != CrowdFund.State.Funding) {
-            assertTrue(currentState == CrowdFund.State.Successful || currentState == CrowdFund.State.Failed);
+            assertTrue(
+                currentState == CrowdFund.State.Successful ||
+                    currentState == CrowdFund.State.Failed
+            );
         }
     }
 
     function invariant_FundsWithdrawnOnlyWhenSuccessful() public view {
         if (crowdFund.fundsWithdrawn()) {
-            assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Successful));
+            assertEq(
+                uint256(crowdFund.currentState()),
+                uint256(CrowdFund.State.Successful)
+            );
         }
     }
 
@@ -988,7 +1035,10 @@ contract CrowdFundTest is Test {
         vm.prank(randomUser);
         crowdFund.checkAndUpdateState();
 
-        assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Successful));
+        assertEq(
+            uint256(crowdFund.currentState()),
+            uint256(CrowdFund.State.Successful)
+        );
     }
 
     function test_AccessControl_OnlyContributorCanRefund() public {
@@ -1015,13 +1065,16 @@ contract CrowdFundTest is Test {
     function test_Edge_ZeroContributorsSuccessful() public {
         // 理论上不可能，但测试直接达到目标
         vm.deal(address(this), 100 ether);
-        (bool success,) = address(crowdFund).call{value: 10 ether}("");
+        (bool success, ) = address(crowdFund).call{value: 10 ether}("");
         assertTrue(success);
 
         vm.warp(block.timestamp + DURATION * 1 minutes + 1);
         crowdFund.checkAndUpdateState();
 
-        assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Successful));
+        assertEq(
+            uint256(crowdFund.currentState()),
+            uint256(CrowdFund.State.Successful)
+        );
     }
 
     function test_Edge_SingleWeiAboveGoal() public {
@@ -1061,7 +1114,10 @@ contract CrowdFundTest is Test {
         vm.warp(block.timestamp + 1 minutes + 1);
         shortCrowdFund.checkAndUpdateState();
 
-        assertEq(uint256(shortCrowdFund.currentState()), uint256(CrowdFund.State.Successful));
+        assertEq(
+            uint256(shortCrowdFund.currentState()),
+            uint256(CrowdFund.State.Successful)
+        );
     }
 
     function test_Edge_VeryLongDuration() public {
@@ -1075,7 +1131,10 @@ contract CrowdFundTest is Test {
 
     function test_Integration_FullLifecycleSuccess() public {
         // 1. 部署
-        assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Funding));
+        assertEq(
+            uint256(crowdFund.currentState()),
+            uint256(CrowdFund.State.Funding)
+        );
 
         // 2. 多人逐步贡献
         vm.prank(contributor1);
@@ -1099,7 +1158,10 @@ contract CrowdFundTest is Test {
 
         // 4. 更新状态
         crowdFund.checkAndUpdateState();
-        assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Successful));
+        assertEq(
+            uint256(crowdFund.currentState()),
+            uint256(CrowdFund.State.Successful)
+        );
 
         // 5. Owner 提取资金
         uint256 balanceBefore = owner.balance;
@@ -1113,7 +1175,10 @@ contract CrowdFundTest is Test {
 
     function test_Integration_FullLifecycleFail() public {
         // 1. 部署
-        assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Funding));
+        assertEq(
+            uint256(crowdFund.currentState()),
+            uint256(CrowdFund.State.Funding)
+        );
 
         // 2. 贡献但未达标
         vm.prank(contributor1);
@@ -1130,7 +1195,10 @@ contract CrowdFundTest is Test {
 
         // 4. 更新状态
         crowdFund.checkAndUpdateState();
-        assertEq(uint256(crowdFund.currentState()), uint256(CrowdFund.State.Failed));
+        assertEq(
+            uint256(crowdFund.currentState()),
+            uint256(CrowdFund.State.Failed)
+        );
 
         // 5. 所有贡献者退款
         uint256 balance1Before = contributor1.balance;
@@ -1179,9 +1247,8 @@ contract MaliciousRefunder {
         // 只尝试重入一次（避免无限循环）
         if (attackCount == 1 && address(targetCrowdFund).balance > 0) {
             try targetCrowdFund.refund() {
-            // 如果重入成功（不应该发生）
-            }
-                catch {
+                // 如果重入成功（不应该发生）
+            } catch {
                 // 重入失败（预期行为）
             }
         }

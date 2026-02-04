@@ -29,7 +29,8 @@ contract GameCharacterTest is Test {
         nft.mint(user1);
 
         // Get attributes
-        GameCharacter.CharacterAttributes memory attrs = nft.getCharacterAttributes(1);
+        GameCharacter.CharacterAttributes memory attrs = nft
+            .getCharacterAttributes(1);
 
         // Verify initial state
         assertEq(attrs.level, 1);
@@ -79,7 +80,8 @@ contract GameCharacterTest is Test {
         nft.mint(user1);
 
         // Get initial attributes
-        GameCharacter.CharacterAttributes memory attrsBefore = nft.getCharacterAttributes(1);
+        GameCharacter.CharacterAttributes memory attrsBefore = nft
+            .getCharacterAttributes(1);
         uint256 initialXP = attrsBefore.experience;
 
         // Train as user1
@@ -87,7 +89,8 @@ contract GameCharacterTest is Test {
         nft.train(1);
 
         // Check XP increased
-        GameCharacter.CharacterAttributes memory attrsAfter = nft.getCharacterAttributes(1);
+        GameCharacter.CharacterAttributes memory attrsAfter = nft
+            .getCharacterAttributes(1);
         assertTrue(attrsAfter.experience > initialXP, "XP should increase");
     }
 
@@ -102,7 +105,8 @@ contract GameCharacterTest is Test {
         vm.stopPrank();
 
         // Character should have leveled up
-        GameCharacter.CharacterAttributes memory attrs = nft.getCharacterAttributes(1);
+        GameCharacter.CharacterAttributes memory attrs = nft
+            .getCharacterAttributes(1);
         assertTrue(attrs.level > 1, "Should have leveled up");
         assertTrue(attrs.strength > 20, "Strength should have increased");
     }

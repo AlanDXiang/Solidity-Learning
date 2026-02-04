@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.19;
+pragma solidity ^0.8.20;
 
 import {Test, console2} from "forge-std/Test.sol";
 import {VotingContract} from "../../src/Voting/Voting.sol";
@@ -58,17 +58,25 @@ contract VotingContractTest is Test {
     // ============================================
 
     function test_Constructor_SetsChairpersonCorrectly() public view {
-        assertEq(votingContract.chairperson(), chairperson, "Chairperson should be deployer");
+        assertEq(
+            votingContract.chairperson(),
+            chairperson,
+            "Chairperson should be deployer"
+        );
     }
 
     function test_Constructor_ChairpersonCanVote() public view {
-        (bool hasVoted,, uint256 weight) = votingContract.voters(chairperson);
+        (bool hasVoted, , uint256 weight) = votingContract.voters(chairperson);
         assertEq(weight, 1, "Chairperson should have voting weight");
         assertFalse(hasVoted, "Chairperson should not have voted yet");
     }
 
     function test_Constructor_CreatesAllProposals() public view {
-        assertEq(votingContract.getProposalCount(), 3, "Should create 3 proposals");
+        assertEq(
+            votingContract.getProposalCount(),
+            3,
+            "Should create 3 proposals"
+        );
 
         (string memory name0, uint256 voteCount0) = votingContract.proposals(0);
         (string memory name1, uint256 voteCount1) = votingContract.proposals(1);
@@ -107,7 +115,7 @@ contract VotingContractTest is Test {
         votingContract.giveRightToVote(voter1);
 
         // Assert: Check voter1 now has weight
-        (,, uint256 weight) = votingContract.voters(voter1);
+        (, , uint256 weight) = votingContract.voters(voter1);
         assertEq(weight, 1, "Voter should have weight 1");
     }
 
@@ -164,7 +172,7 @@ contract VotingContractTest is Test {
         votingContract.vote(0);
 
         // Assert: Check vote was recorded
-        (bool hasVoted, uint256 votedFor,) = votingContract.voters(voter1);
+        (bool hasVoted, uint256 votedFor, ) = votingContract.voters(voter1);
         assertTrue(hasVoted, "Voter should be marked as voted");
         assertEq(votedFor, 0, "Voter should have voted for proposal 0");
 
@@ -289,7 +297,8 @@ contract VotingContractTest is Test {
     // ============================================
 
     function test_GetAllProposals_ReturnsCorrectData() public {
-        (string[] memory names, uint256[] memory voteCounts) = votingContract.getAllProposals();
+        (string[] memory names, uint256[] memory voteCounts) = votingContract
+            .getAllProposals();
 
         assertEq(names.length, 3, "Should return 3 names");
         assertEq(voteCounts.length, 3, "Should return 3 vote counts");
@@ -415,7 +424,11 @@ contract VotingContractTest is Test {
     /**
      * @dev Fuzz test: Multiple voters with random proposal choices
      */
-    function testFuzz_MultipleVoters_RandomChoices(uint8 proposal1, uint8 proposal2, uint8 proposal3) public {
+    function testFuzz_MultipleVoters_RandomChoices(
+        uint8 proposal1,
+        uint8 proposal2,
+        uint8 proposal3
+    ) public {
         // Bound all proposals to valid range
         proposal1 = uint8(bound(proposal1, 0, 2));
         proposal2 = uint8(bound(proposal2, 0, 2));
@@ -514,7 +527,11 @@ contract VotingContractTest is Test {
         string memory winnerName = votingContract.winnerName();
 
         assertEq(winner, 0);
-        assertEq(winnerName, "Proposal A", "Should return first proposal when no votes");
+        assertEq(
+            winnerName,
+            "Proposal A",
+            "Should return first proposal when no votes"
+        );
     }
 
     function test_SingleVoterScenario() public {
@@ -567,18 +584,20 @@ contract VotingContractTest is Test {
         vm.prank(makeAddr("newChairperson"));
         VotingContract newContract = new VotingContract(emptyNames);
 
-        (string memory name,) = newContract.proposals(0);
+        (string memory name, ) = newContract.proposals(0);
         assertEq(name, "", "Empty string proposal should be allowed");
     }
 
     function test_Proposal_WithVeryLongString() public {
         string[] memory longNames = new string[](1);
-        longNames[0] = "This is a very long proposal name that exceeds normal length to test string handling";
+        longNames[
+            0
+        ] = "This is a very long proposal name that exceeds normal length to test string handling";
 
         vm.prank(makeAddr("newChairperson"));
         VotingContract newContract = new VotingContract(longNames);
 
-        (string memory name,) = newContract.proposals(0);
+        (string memory name, ) = newContract.proposals(0);
         assertEq(name, longNames[0], "Long string should be stored correctly");
     }
 
@@ -588,7 +607,11 @@ contract VotingContractTest is Test {
         vm.prank(makeAddr("newChairperson"));
         VotingContract newContract = new VotingContract(noProposals);
 
-        assertEq(newContract.getProposalCount(), 0, "Should handle zero proposals");
+        assertEq(
+            newContract.getProposalCount(),
+            0,
+            "Should handle zero proposals"
+        );
     }
 
     // ============================================

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.20;
 
 /**
  * @title MyToken - A Complete ERC20 Implementation
@@ -8,9 +8,9 @@ pragma solidity ^0.8.0;
  */
 contract MyToken {
     // ===== TOKEN METADATA =====
-    string public name = "AlanDXiang Coin";
-    string public symbol = "ADX";
-    uint8 public decimals = 18;
+    string public constant name = "AlanDXiang Coin";
+    string public constant symbol = "ADX";
+    uint8 public constant decimals = 18;
 
     // ===== CORE STATE VARIABLES =====
     uint256 public totalSupply;
@@ -24,7 +24,11 @@ contract MyToken {
 
     // ===== EVENTS =====
     event Transfer(address indexed from, address indexed to, uint256 value);
-    event Approval(address indexed owner, address indexed spender, uint256 value);
+    event Approval(
+        address indexed owner,
+        address indexed spender,
+        uint256 value
+    );
 
     // ===== CONSTRUCTOR =====
     constructor(uint256 _initialSupply) {
@@ -41,7 +45,10 @@ contract MyToken {
      * @param _value Amount of tokens to send (in smallest unit)
      * @return success True if transfer succeeded
      */
-    function transfer(address _to, uint256 _value) public returns (bool success) {
+    function transfer(
+        address _to,
+        uint256 _value
+    ) public returns (bool success) {
         // Security Check 1: Can't send to zero address (burning tokens)
         require(_to != address(0), "Cannot transfer to zero address");
 
@@ -65,7 +72,10 @@ contract MyToken {
      * @param _value Maximum amount they can spend
      * @return success True if approval succeeded
      */
-    function approve(address _spender, uint256 _value) public returns (bool success) {
+    function approve(
+        address _spender,
+        uint256 _value
+    ) public returns (bool success) {
         require(_spender != address(0), "Cannot approve zero address");
 
         // Set the allowance
@@ -85,7 +95,11 @@ contract MyToken {
      * @param _value Amount to transfer
      * @return success True if transfer succeeded
      */
-    function transferFrom(address _from, address _to, uint256 _value) public returns (bool success) {
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool success) {
         require(_to != address(0), "Cannot transfer to zero address");
         require(_value <= balanceOf[_from], "Insufficient balance");
         require(_value <= allowance[_from][msg.sender], "Allowance exceeded");
@@ -109,7 +123,10 @@ contract MyToken {
      * @notice Increase the allowance for a spender
      * @dev Safer than approve() for incrementing allowance
      */
-    function increaseAllowance(address _spender, uint256 _addedValue) public returns (bool) {
+    function increaseAllowance(
+        address _spender,
+        uint256 _addedValue
+    ) public returns (bool) {
         require(_spender != address(0), "Cannot approve zero address");
 
         allowance[msg.sender][_spender] += _addedValue;
@@ -121,11 +138,17 @@ contract MyToken {
     /**
      * @notice Decrease the allowance for a spender
      */
-    function decreaseAllowance(address _spender, uint256 _subtractedValue) public returns (bool) {
+    function decreaseAllowance(
+        address _spender,
+        uint256 _subtractedValue
+    ) public returns (bool) {
         require(_spender != address(0), "Cannot approve zero address");
 
         uint256 currentAllowance = allowance[msg.sender][_spender];
-        require(currentAllowance >= _subtractedValue, "Decreased allowance below zero");
+        require(
+            currentAllowance >= _subtractedValue,
+            "Decreased allowance below zero"
+        );
 
         allowance[msg.sender][_spender] = currentAllowance - _subtractedValue;
         emit Approval(msg.sender, _spender, allowance[msg.sender][_spender]);
@@ -138,7 +161,10 @@ contract MyToken {
      * @dev Reduces total supply permanently
      */
     function burn(uint256 _value) public returns (bool success) {
-        require(balanceOf[msg.sender] >= _value, "Insufficient balance to burn");
+        require(
+            balanceOf[msg.sender] >= _value,
+            "Insufficient balance to burn"
+        );
 
         balanceOf[msg.sender] -= _value;
         totalSupply -= _value;
