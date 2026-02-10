@@ -88,8 +88,8 @@ contract StakingPool is ReentrancyGuard, Ownable {
     // Calculates how much a specific user has earned
     function earned(address _account) public view returns (uint256) {
         // Formula: Balance * (CurrentOdometer - UserSnapshot) / 1e18 + PendingRewards
-        return ((balanceOf[_account] * (rewardPerToken() - userRewardPerTokenPaid[_account])) / 1e18)
-            + rewards[_account];
+        return
+            ((balanceOf[_account] * (rewardPerToken() - userRewardPerTokenPaid[_account])) / 1e18) + rewards[_account];
     }
 
     // Helper for min value
