@@ -45,10 +45,7 @@ contract StakingPool is ReentrancyGuard, Ownable {
     event RewardAdded(uint256 reward);
 
     // -- CONSTRUCTOR --
-    constructor(
-        address _stakingToken,
-        address _rewardsToken
-    ) Ownable(msg.sender) {
+    constructor(address _stakingToken, address _rewardsToken) Ownable(msg.sender) {
         stakingToken = IERC20(_stakingToken);
         rewardsToken = IERC20(_rewardsToken);
     }
@@ -85,19 +82,14 @@ contract StakingPool is ReentrancyGuard, Ownable {
         }
 
         // Formula: OldOdometer + (Rate * TimeDelta * 1e18 / TotalSupply)
-        return
-            rewardPerTokenStored +
-            (rewardRate * (lastTimeRewardApplicable() - updatedAt) * 1e18) /
-            totalSupply;
+        return rewardPerTokenStored + (rewardRate * (lastTimeRewardApplicable() - updatedAt) * 1e18) / totalSupply;
     }
 
     // Calculates how much a specific user has earned
     function earned(address _account) public view returns (uint256) {
         // Formula: Balance * (CurrentOdometer - UserSnapshot) / 1e18 + PendingRewards
-        return
-            ((balanceOf[_account] *
-                (rewardPerToken() - userRewardPerTokenPaid[_account])) / 1e18) +
-            rewards[_account];
+        return ((balanceOf[_account] * (rewardPerToken() - userRewardPerTokenPaid[_account])) / 1e18)
+            + rewards[_account];
     }
 
     // Helper for min value
@@ -108,9 +100,7 @@ contract StakingPool is ReentrancyGuard, Ownable {
     // -- USER FUNCTIONS --
 
     // Stake tokens into the pool
-    function stake(
-        uint256 _amount
-    ) external nonReentrant updateReward(msg.sender) {
+    function stake(uint256 _amount) external nonReentrant updateReward(msg.sender) {
         require(_amount > 0, "Cannot stake 0");
 
         // Transfer tokens from user to contract
@@ -124,9 +114,7 @@ contract StakingPool is ReentrancyGuard, Ownable {
     }
 
     // Withdraw staked tokens
-    function withdraw(
-        uint256 _amount
-    ) public nonReentrant updateReward(msg.sender) {
+    function withdraw(uint256 _amount) public nonReentrant updateReward(msg.sender) {
         require(_amount > 0, "Cannot withdraw 0");
         require(balanceOf[msg.sender] >= _amount, "Insufficient balance");
 
@@ -165,25 +153,19 @@ contract StakingPool is ReentrancyGuard, Ownable {
     }
 
     // Start the Staking Event (Epoch) or Add more rewards to an active one
-    function notifyRewardAmount(
-        uint256 _amount
-    ) external onlyOwner updateReward(address(0)) {
+    function notifyRewardAmount(uint256 _amount) external onlyOwner updateReward(address(0)) {
         if (block.timestamp >= finishAt) {
             // If the old event is over, start a fresh one
             rewardRate = _amount / duration;
         } else {
             // If event is running, add new rewards to the remaining time
-            uint256 remainingRewards = (finishAt - block.timestamp) *
-                rewardRate;
+            uint256 remainingRewards = (finishAt - block.timestamp) * rewardRate;
             rewardRate = (_amount + remainingRewards) / duration;
         }
 
         // Safety check: Ensure rate isn't too high for the balance
         require(rewardRate > 0, "Reward rate too low");
-        require(
-            rewardRate * duration <= rewardsToken.balanceOf(address(this)),
-            "Reward amount > balance"
-        );
+        require(rewardRate * duration <= rewardsToken.balanceOf(address(this)), "Reward amount > balance");
 
         finishAt = block.timestamp + duration;
         updatedAt = block.timestamp;

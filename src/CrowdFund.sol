@@ -40,11 +40,7 @@ contract CrowdFund {
     // ========== 事件 ==========
 
     // 当有人贡献资金时触发
-    event ContributionReceived(
-        address indexed contributor,
-        uint256 amount,
-        uint256 totalFunded
-    );
+    event ContributionReceived(address indexed contributor, uint256 amount, uint256 totalFunded);
 
     // 当创建者提取资金时触发
     event FundsWithdrawn(address indexed owner, uint256 amount);
@@ -140,12 +136,7 @@ contract CrowdFund {
      * @dev 创建者提取资金（仅在成功时）
      * @notice 只有合约创建者可以调用
      */
-    function withdrawFunds()
-        public
-        onlyOwner
-        afterDeadline
-        inState(State.Successful)
-    {
+    function withdrawFunds() public onlyOwner afterDeadline inState(State.Successful) {
         require(!fundsWithdrawn, "Funds already withdrawn");
 
         fundsWithdrawn = true;
@@ -154,7 +145,7 @@ contract CrowdFund {
         emit FundsWithdrawn(owner, amount);
 
         // 使用 call 转账（推荐的安全方式）
-        (bool success, ) = payable(owner).call{value: amount}("");
+        (bool success,) = payable(owner).call{value: amount}("");
         require(success, "Transfer failed");
     }
 
@@ -172,9 +163,7 @@ contract CrowdFund {
         emit RefundIssued(msg.sender, contributedAmount);
 
         // 转账退款
-        (bool success, ) = payable(msg.sender).call{value: contributedAmount}(
-            ""
-        );
+        (bool success,) = payable(msg.sender).call{value: contributedAmount}("");
         require(success, "Refund transfer failed");
     }
 
@@ -209,9 +198,7 @@ contract CrowdFund {
     /**
      * @dev 检查某个地址的贡献金额
      */
-    function getContribution(
-        address _contributor
-    ) public view returns (uint256) {
+    function getContribution(address _contributor) public view returns (uint256) {
         return contributions[_contributor];
     }
 

@@ -45,19 +45,11 @@ contract VotingTest is Test {
     // --- TEST: CONSTRUCTOR & INITIAL STATE ---
 
     function test_InitialState() public {
-        assertEq(
-            votingContract.chairperson(),
-            CHAIRPERSON,
-            "Chairperson should be the deployer"
-        );
-        assertEq(
-            votingContract.getProposalCount(),
-            3,
-            "Should have 3 proposals initially"
-        );
+        assertEq(votingContract.chairperson(), CHAIRPERSON, "Chairperson should be the deployer");
+        assertEq(votingContract.getProposalCount(), 3, "Should have 3 proposals initially");
 
         // Check if chairperson has the right to vote
-        (, , uint256 weight) = votingContract.voters(CHAIRPERSON);
+        (,, uint256 weight) = votingContract.voters(CHAIRPERSON);
         assertEq(weight, 1, "Chairperson should have a voting weight of 1");
 
         // Check proposal details
@@ -81,7 +73,7 @@ contract VotingTest is Test {
         vm.stopPrank();
 
         // ASSERT: Check the voter's weight
-        (, , uint256 weight) = votingContract.voters(VOTER_A);
+        (,, uint256 weight) = votingContract.voters(VOTER_A);
         assertEq(weight, 1, "Voter A should now have a voting weight of 1");
     }
 
@@ -122,10 +114,7 @@ contract VotingTest is Test {
         vm.stopPrank();
 
         // ASSERT: Check the state changes
-        assertTrue(
-            votingContract.hasAddressVoted(VOTER_A),
-            "Voter A should be marked as voted"
-        );
+        assertTrue(votingContract.hasAddressVoted(VOTER_A), "Voter A should be marked as voted");
 
         (, uint256 voteCount) = votingContract.proposals(1);
         assertEq(voteCount, 1, "Proposal 1 vote count should be 1");
@@ -183,16 +172,8 @@ contract VotingTest is Test {
         votingContract.vote(1);
 
         // ASSERT
-        assertEq(
-            votingContract.winningProposal(),
-            2,
-            "Winning proposal index should be 2"
-        );
-        assertEq(
-            votingContract.winnerName(),
-            "Proposal C",
-            "Winner name should be 'Proposal C'"
-        );
+        assertEq(votingContract.winningProposal(), 2, "Winning proposal index should be 2");
+        assertEq(votingContract.winnerName(), "Proposal C", "Winner name should be 'Proposal C'");
     }
 
     function test_WinningProposal_InCaseOfTie() public {
@@ -212,11 +193,7 @@ contract VotingTest is Test {
 
         // Now Proposal 1 and 2 each have 1 vote
         // ARRANGE
-        assertEq(
-            votingContract.winningProposal(),
-            1,
-            "In a tie, the first proposal found with max votes should win"
-        );
+        assertEq(votingContract.winningProposal(), 1, "In a tie, the first proposal found with max votes should win");
     }
 
     // --- TEST: View Functions ---
@@ -227,8 +204,7 @@ contract VotingTest is Test {
         votingContract.vote(0);
 
         // ACT
-        (string[] memory names, uint256[] memory counts) = votingContract
-            .getAllProposals();
+        (string[] memory names, uint256[] memory counts) = votingContract.getAllProposals();
 
         // ASSERT
         assertEq(names.length, 3, "Should return 3 proposal names");
